@@ -3,22 +3,23 @@ package com.katyrin.dictionaryapp.view.main
 import android.os.Bundle
 import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.katyrin.dictionaryapp.data.model.AppState
 import com.katyrin.dictionaryapp.R
 import com.katyrin.dictionaryapp.databinding.ActivityMainBinding
-import com.katyrin.dictionaryapp.presenter.Presenter
-import com.katyrin.dictionaryapp.view.base.View
-import com.katyrin.dictionaryapp.presenter.MainPresenterImpl
+import com.katyrin.dictionaryapp.viewmodel.interactor.MainInteractor
 import com.katyrin.dictionaryapp.view.base.BaseActivity
 import com.katyrin.dictionaryapp.view.main.adapter.MainAdapter
+import com.katyrin.dictionaryapp.viewmodel.MainViewModel
 
-class MainActivity : BaseActivity<AppState>() {
+class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
     private var binding: ActivityMainBinding? = null
     private var adapter: MainAdapter? = null
-
-    override fun createPresenter(): Presenter<AppState, View> = MainPresenterImpl()
+    override val viewModel: MainViewModel by lazy {
+        ViewModelProvider.NewInstanceFactory().create(MainViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +29,9 @@ class MainActivity : BaseActivity<AppState>() {
             SearchDialogFragment.newInstance(supportFragmentManager).setOnSearchClickListener(
                 object : SearchDialogFragment.OnSearchClickListener {
                     override fun onClick(searchWord: String) {
-                        presenter.getData(searchWord, true)
+                        viewModel
+                            .getData(searchWord, true)
+                            .observe(this@MainActivity) { renderData(it) }
                     }
                 }
             )
@@ -75,7 +78,7 @@ class MainActivity : BaseActivity<AppState>() {
         showViewError()
         binding?.errorTextview?.text = error ?: getString(R.string.undefined_error)
         binding?.reloadButton?.setOnClickListener {
-            presenter.getData("hi", true)
+            viewModel.getData(HI, true).observe(this) { renderData(it) }
         }
     }
 
@@ -100,5 +103,9 @@ class MainActivity : BaseActivity<AppState>() {
     override fun onDestroy() {
         binding = null
         super.onDestroy()
+    }
+
+    private companion object {
+        const val HI = "hi"
     }
 }

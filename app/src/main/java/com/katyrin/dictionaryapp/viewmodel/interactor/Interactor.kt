@@ -1,4 +1,4 @@
-package com.katyrin.dictionaryapp.presenter.interactor
+package com.katyrin.dictionaryapp.viewmodel.interactor
 
 import io.reactivex.Observable
 

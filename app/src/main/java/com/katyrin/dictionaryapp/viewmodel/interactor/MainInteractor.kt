@@ -1,4 +1,4 @@
-package com.katyrin.dictionaryapp.presenter.interactor
+package com.katyrin.dictionaryapp.viewmodel.interactor
 
 import com.katyrin.dictionaryapp.data.model.AppState
 import com.katyrin.dictionaryapp.data.model.DataModel
