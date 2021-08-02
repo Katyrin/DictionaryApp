@@ -2,7 +2,9 @@ package com.katyrin.dictionaryapp.view.main
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.view.isVisible
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.katyrin.dictionaryapp.data.model.AppState
@@ -12,14 +14,17 @@ import com.katyrin.dictionaryapp.viewmodel.interactor.MainInteractor
 import com.katyrin.dictionaryapp.view.base.BaseActivity
 import com.katyrin.dictionaryapp.view.main.adapter.MainAdapter
 import com.katyrin.dictionaryapp.viewmodel.MainViewModel
+import dagger.android.AndroidInjection
+import javax.inject.Inject
 
 class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
+    override val viewModel: MainViewModel by viewModels(factoryProducer = { factory })
+
     private var binding: ActivityMainBinding? = null
     private var adapter: MainAdapter? = null
-    override val viewModel: MainViewModel by lazy {
-        ViewModelProvider.NewInstanceFactory().create(MainViewModel::class.java)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,10 +43,10 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
         }
     }
 
-    override fun renderData(appState: AppState) {
-        when (appState) {
+    override fun renderData(state: AppState) {
+        when (state) {
             is AppState.Success -> {
-                val dataModel = appState.data
+                val dataModel = state.data
                 if (dataModel == null || dataModel.isEmpty()) {
                     showErrorScreen(getString(R.string.empty_server_response_on_success))
                 } else {
@@ -61,16 +66,16 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
             }
             is AppState.Loading -> {
                 showViewLoading()
-                if (appState.progress != null) {
+                if (state.progress != null) {
                     binding?.progressBarHorizontal?.isVisible = true
                     binding?.progressBarRound?.isVisible = false
-                    binding?.progressBarHorizontal?.progress = appState.progress
+                    binding?.progressBarHorizontal?.progress = state.progress
                 } else {
                     binding?.progressBarHorizontal?.isVisible = false
                     binding?.progressBarRound?.isVisible = true
                 }
             }
-            is AppState.Error -> showErrorScreen(appState.error.message)
+            is AppState.Error -> showErrorScreen(state.error.message)
         }
     }
 

@@ -1,18 +1,13 @@
 package com.katyrin.dictionaryapp.viewmodel
 
 import androidx.lifecycle.LiveData
-import com.katyrin.dictionaryapp.data.datasource.DataSourceLocal
-import com.katyrin.dictionaryapp.data.datasource.DataSourceRemote
 import com.katyrin.dictionaryapp.data.model.AppState
-import com.katyrin.dictionaryapp.data.repository.RepositoryImplementation
 import com.katyrin.dictionaryapp.viewmodel.interactor.MainInteractor
 import io.reactivex.observers.DisposableObserver
+import javax.inject.Inject
 
-class MainViewModel(
-    private val interactor: MainInteractor = MainInteractor(
-        RepositoryImplementation(DataSourceRemote()),
-        RepositoryImplementation(DataSourceLocal())
-    )
+class MainViewModel @Inject constructor(
+    private val interactor: MainInteractor
 ) : BaseViewModel<AppState>() {
     private var appState: AppState? = null
 
