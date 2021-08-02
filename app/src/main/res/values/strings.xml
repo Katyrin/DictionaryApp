@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">DictionaryApp</string>
+    <string name="search_button">Search button</string>
+    <string name="empty_server_response_on_success">Empty server response on success</string>
+    <string name="undefined_error">Undefined error</string>
+    <string name="reload">Reload</string>
+    <string name="enter_word">Enter word</string>
+    <string name="enter_search_word">Enter search word</string>
+    <string name="close">Close</string>
+    <string name="search">Search</string>
+</resources>
