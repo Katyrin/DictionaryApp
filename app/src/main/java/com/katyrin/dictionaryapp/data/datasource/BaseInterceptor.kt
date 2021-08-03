@@ -3,16 +3,15 @@ package com.katyrin.dictionaryapp.data.datasource
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
-import javax.inject.Inject
 
-class BaseInterceptor @Inject constructor() : Interceptor {
+class BaseInterceptor: Interceptor {
 
     private var responseCode: Int = 0
 
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response =
         chain.proceed(chain.request()).also { response ->
-            responseCode = response.code()
+            responseCode = response.code
         }
 
     fun getResponseCode(): ServerResponseStatusCode {

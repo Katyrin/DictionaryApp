@@ -1,22 +1,17 @@
 package com.katyrin.dictionaryapp
 
-import com.katyrin.dictionaryapp.di.DaggerAppComponent
-import dagger.android.AndroidInjector
-import dagger.android.DaggerApplication
+import android.app.Application
+import com.katyrin.dictionaryapp.di.application
+import com.katyrin.dictionaryapp.di.mainScreen
+import com.katyrin.dictionaryapp.di.network
+import org.koin.core.context.startKoin
 
-class DictionaryApp : DaggerApplication() {
-
-    override fun applicationInjector(): AndroidInjector<out DaggerApplication> =
-        DaggerAppComponent.builder()
-            .withContext(applicationContext)
-            .build()
+class DictionaryApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        appInstance = this
-    }
-
-    companion object {
-        private lateinit var appInstance: DictionaryApp
+        startKoin {
+            modules(listOf(application, mainScreen, network))
+        }
     }
 }
