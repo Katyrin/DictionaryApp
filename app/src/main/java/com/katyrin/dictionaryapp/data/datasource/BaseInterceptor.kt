@@ -3,8 +3,9 @@ package com.katyrin.dictionaryapp.data.datasource
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
+import javax.inject.Inject
 
-class BaseInterceptor private constructor() : Interceptor {
+class BaseInterceptor @Inject constructor() : Interceptor {
 
     private var responseCode: Int = 0
 

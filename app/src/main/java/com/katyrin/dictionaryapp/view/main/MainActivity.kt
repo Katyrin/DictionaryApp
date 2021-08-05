@@ -2,23 +2,29 @@ package com.katyrin.dictionaryapp.view.main
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.view.isVisible
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.katyrin.dictionaryapp.data.model.AppState
 import com.katyrin.dictionaryapp.R
 import com.katyrin.dictionaryapp.databinding.ActivityMainBinding
-import com.katyrin.dictionaryapp.presenter.Presenter
-import com.katyrin.dictionaryapp.view.base.View
-import com.katyrin.dictionaryapp.presenter.MainPresenterImpl
+import com.katyrin.dictionaryapp.viewmodel.interactor.MainInteractor
 import com.katyrin.dictionaryapp.view.base.BaseActivity
 import com.katyrin.dictionaryapp.view.main.adapter.MainAdapter
+import com.katyrin.dictionaryapp.viewmodel.MainViewModel
+import dagger.android.AndroidInjection
+import javax.inject.Inject
 
-class MainActivity : BaseActivity<AppState>() {
+class MainActivity : BaseActivity<AppState, MainInteractor>() {
+
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
+    override val viewModel: MainViewModel by viewModels(factoryProducer = { factory })
 
     private var binding: ActivityMainBinding? = null
     private var adapter: MainAdapter? = null
-
-    override fun createPresenter(): Presenter<AppState, View> = MainPresenterImpl()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,17 +34,19 @@ class MainActivity : BaseActivity<AppState>() {
             SearchDialogFragment.newInstance(supportFragmentManager).setOnSearchClickListener(
                 object : SearchDialogFragment.OnSearchClickListener {
                     override fun onClick(searchWord: String) {
-                        presenter.getData(searchWord, true)
+                        viewModel
+                            .getData(searchWord, true)
+                            .observe(this@MainActivity) { renderData(it) }
                     }
                 }
             )
         }
     }
 
-    override fun renderData(appState: AppState) {
-        when (appState) {
+    override fun renderData(state: AppState) {
+        when (state) {
             is AppState.Success -> {
-                val dataModel = appState.data
+                val dataModel = state.data
                 if (dataModel == null || dataModel.isEmpty()) {
                     showErrorScreen(getString(R.string.empty_server_response_on_success))
                 } else {
@@ -58,16 +66,16 @@ class MainActivity : BaseActivity<AppState>() {
             }
             is AppState.Loading -> {
                 showViewLoading()
-                if (appState.progress != null) {
+                if (state.progress != null) {
                     binding?.progressBarHorizontal?.isVisible = true
                     binding?.progressBarRound?.isVisible = false
-                    binding?.progressBarHorizontal?.progress = appState.progress
+                    binding?.progressBarHorizontal?.progress = state.progress
                 } else {
                     binding?.progressBarHorizontal?.isVisible = false
                     binding?.progressBarRound?.isVisible = true
                 }
             }
-            is AppState.Error -> showErrorScreen(appState.error.message)
+            is AppState.Error -> showErrorScreen(state.error.message)
         }
     }
 
@@ -75,7 +83,7 @@ class MainActivity : BaseActivity<AppState>() {
         showViewError()
         binding?.errorTextview?.text = error ?: getString(R.string.undefined_error)
         binding?.reloadButton?.setOnClickListener {
-            presenter.getData("hi", true)
+            viewModel.getData(HI, true).observe(this) { renderData(it) }
         }
     }
 
@@ -100,5 +108,9 @@ class MainActivity : BaseActivity<AppState>() {
     override fun onDestroy() {
         binding = null
         super.onDestroy()
+    }
+
+    private companion object {
+        const val HI = "hi"
     }
 }
