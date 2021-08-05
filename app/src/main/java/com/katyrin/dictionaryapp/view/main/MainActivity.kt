@@ -1,7 +1,9 @@
 package com.katyrin.dictionaryapp.view.main
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.katyrin.dictionaryapp.R
 import com.katyrin.dictionaryapp.data.model.AppState
 import com.katyrin.dictionaryapp.databinding.ActivityMainBinding
@@ -17,13 +19,21 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
     override lateinit var model: MainViewModel
 
     private var binding: ActivityMainBinding? = null
-    private var adapter: MainAdapter? = null
+    private val adapter: MainAdapter by lazy {
+        MainAdapter {
+            Toast.makeText(this@MainActivity, it.text, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
         iniViewModel()
+        initViews()
+    }
+
+    private fun initViews() {
         binding?.searchFab?.setOnClickListener {
             SearchDialogFragment.newInstance(supportFragmentManager).setOnSearchClickListener(
                 object : SearchDialogFragment.OnSearchClickListener {
@@ -38,6 +48,8 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
                 }
             )
         }
+        binding?.mainActivityRecyclerview?.layoutManager = LinearLayoutManager(applicationContext)
+        binding?.mainActivityRecyclerview?.adapter = adapter
     }
 
     private fun iniViewModel() {

@@ -1,7 +1,6 @@
 package com.katyrin.dictionaryapp.di
 
 import com.google.gson.GsonBuilder
-import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.katyrin.dictionaryapp.data.datasource.ApiService
 import com.katyrin.dictionaryapp.data.datasource.BaseInterceptor
 import okhttp3.Interceptor
@@ -22,7 +21,6 @@ val network = module {
 fun provideApiPost(client: OkHttpClient): ApiService = Retrofit.Builder()
     .baseUrl(BASE_URL_LOCATIONS)
     .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
-    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
     .client(client)
     .build().create(ApiService::class.java)
 

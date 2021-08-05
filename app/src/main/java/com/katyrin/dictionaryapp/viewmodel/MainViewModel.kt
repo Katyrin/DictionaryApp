@@ -2,14 +2,15 @@ package com.katyrin.dictionaryapp.viewmodel
 
 import androidx.lifecycle.LiveData
 import com.katyrin.dictionaryapp.data.model.AppState
+import com.katyrin.dictionaryapp.utils.parseSearchResults
 import com.katyrin.dictionaryapp.viewmodel.interactor.MainInteractor
-import io.reactivex.observers.DisposableObserver
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class MainViewModel(
-    private val interactor: MainInteractor
-) : BaseViewModel<AppState>() {
+class MainViewModel(private val interactor: MainInteractor) :
+    BaseViewModel<AppState>() {
 
-    private var appState: AppState? = null
     private val liveDataForViewToObserve: LiveData<AppState> = _mutableLiveData
 
     fun subscribe(): LiveData<AppState> {
@@ -17,28 +18,22 @@ class MainViewModel(
     }
 
     override fun getData(word: String, isOnline: Boolean) {
-        compositeDisposable.add(
-            interactor.getData(word, isOnline)
-                .subscribeOn(schedulerProvider.io())
-                .observeOn(schedulerProvider.ui())
-                .doOnSubscribe { _mutableLiveData.value = AppState.Loading(null) }
-
-                .subscribeWith(getObserver())
-        )
+        _mutableLiveData.value = AppState.Loading(null)
+        cancelJob()
+        viewModelCoroutineScope.launch { startInteractor(word, isOnline) }
     }
 
-    private fun getObserver(): DisposableObserver<AppState> =
-        object : DisposableObserver<AppState>() {
-
-            override fun onNext(state: AppState) {
-                appState = state
-                _mutableLiveData.value = state
-            }
-
-            override fun onError(e: Throwable) {
-                _mutableLiveData.value = AppState.Error(e)
-            }
-
-            override fun onComplete() {}
+    private suspend fun startInteractor(word: String, isOnline: Boolean) =
+        withContext(Dispatchers.IO) {
+            _mutableLiveData.postValue(parseSearchResults(interactor.getData(word, isOnline)))
         }
+
+    override fun handleError(error: Throwable) {
+        _mutableLiveData.postValue(AppState.Error(error))
+    }
+
+    override fun onCleared() {
+        _mutableLiveData.value = AppState.Success(null)
+        super.onCleared()
+    }
 }
