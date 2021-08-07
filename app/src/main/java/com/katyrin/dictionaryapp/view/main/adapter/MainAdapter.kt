@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.katyrin.dictionaryapp.data.model.DataModel
 import com.katyrin.dictionaryapp.databinding.ItemDictionaryBinding
-import com.katyrin.dictionaryapp.utils.convertMeaningsToString
 
 class MainAdapter(
     private val onItemClick: (DataModel) -> Unit
@@ -18,7 +17,6 @@ class MainAdapter(
             if (layoutPosition != RecyclerView.NO_POSITION) {
                 itemBinding.headerTextviewRecyclerItem.text = dataModel.text
                 itemBinding.descriptionTextviewRecyclerItem.text =
-                    //convertMeaningsToString(dataModel.meanings!!)
                     dataModel.meanings?.get(0)?.translation?.translation
 
                 itemBinding.root.setOnClickListener { onItemClick(dataModel) }

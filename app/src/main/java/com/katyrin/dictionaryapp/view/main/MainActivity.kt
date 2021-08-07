@@ -1,13 +1,14 @@
 package com.katyrin.dictionaryapp.view.main
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.katyrin.dictionaryapp.R
 import com.katyrin.dictionaryapp.data.model.AppState
 import com.katyrin.dictionaryapp.databinding.ActivityMainBinding
+import com.katyrin.dictionaryapp.utils.convertMeaningsToString
 import com.katyrin.dictionaryapp.view.base.BaseActivity
+import com.katyrin.dictionaryapp.view.description.DescriptionActivity
 import com.katyrin.dictionaryapp.view.main.adapter.MainAdapter
 import com.katyrin.dictionaryapp.viewmodel.MainViewModel
 import com.katyrin.dictionaryapp.viewmodel.interactor.MainInteractor
@@ -20,8 +21,15 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
     private var binding: ActivityMainBinding? = null
     private val adapter: MainAdapter by lazy {
-        MainAdapter {
-            Toast.makeText(this@MainActivity, it.text, Toast.LENGTH_SHORT).show()
+        MainAdapter { data ->
+            startActivity(
+                DescriptionActivity.getIntent(
+                    this@MainActivity,
+                    data.text!!,
+                    convertMeaningsToString(data.meanings!!),
+                    data.meanings[0].imageUrl
+                )
+            )
         }
     }
 
