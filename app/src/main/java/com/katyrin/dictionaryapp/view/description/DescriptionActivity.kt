@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.ImageView
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -17,11 +18,19 @@ import com.katyrin.dictionaryapp.data.networkstatus.NetworkState
 import com.katyrin.dictionaryapp.data.networkstatus.NetworkStateImpl
 import com.katyrin.dictionaryapp.databinding.ActivityDescriptionBinding
 import com.katyrin.dictionaryapp.view.AlertDialogFragment
+import kotlinx.coroutines.*
 
 class DescriptionActivity : AppCompatActivity() {
 
     private val networkState: NetworkState by lazy { NetworkStateImpl(applicationContext) }
     private var binding: ActivityDescriptionBinding? = null
+
+    private val descriptionActivityCoroutineScope = CoroutineScope(
+        Dispatchers.Main
+                + SupervisorJob()
+                + CoroutineExceptionHandler { _, throwable ->
+            Toast.makeText(this, throwable.message, Toast.LENGTH_LONG).show()
+        })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,14 +70,16 @@ class DescriptionActivity : AppCompatActivity() {
     }
 
     private fun startLoadingOrShowError() {
-        if (networkState.isOnline()) {
-            setData()
-        } else {
-            AlertDialogFragment.newInstance(
-                getString(R.string.dialog_title_device_is_offline),
-                getString(R.string.dialog_message_device_is_offline)
-            ).show(supportFragmentManager, DIALOG_FRAGMENT_TAG)
-            stopRefreshAnimationIfNeeded()
+        descriptionActivityCoroutineScope.launch {
+            if (networkState.isOnline()) {
+                setData()
+            } else {
+                AlertDialogFragment.newInstance(
+                    getString(R.string.dialog_title_device_is_offline),
+                    getString(R.string.dialog_message_device_is_offline)
+                ).show(supportFragmentManager, DIALOG_FRAGMENT_TAG)
+                stopRefreshAnimationIfNeeded()
+            }
         }
     }
 
@@ -109,6 +120,16 @@ class DescriptionActivity : AppCompatActivity() {
                     .centerCrop()
             )
             .into(imageView)
+    }
+
+    private fun cancelJob() {
+        descriptionActivityCoroutineScope.coroutineContext.cancelChildren()
+    }
+
+    override fun onDestroy() {
+        cancelJob()
+        binding = null
+        super.onDestroy()
     }
 
     companion object {

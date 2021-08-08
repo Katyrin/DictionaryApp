@@ -1,4 +1,4 @@
-package com.katyrin.dictionaryapp.data.datasource
+package com.katyrin.dictionaryapp.data.network
 
 import okhttp3.Interceptor
 import okhttp3.Response
