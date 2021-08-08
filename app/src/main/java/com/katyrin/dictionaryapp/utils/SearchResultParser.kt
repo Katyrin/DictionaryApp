@@ -3,6 +3,7 @@ package com.katyrin.dictionaryapp.utils
 import com.katyrin.dictionaryapp.data.model.AppState
 import com.katyrin.dictionaryapp.data.model.DataModel
 import com.katyrin.dictionaryapp.data.model.Meanings
+import com.katyrin.dictionaryapp.data.model.Translation
 import com.katyrin.dictionaryapp.data.storage.HistoryEntity
 
 fun parseSearchResults(data: AppState): AppState {
@@ -55,6 +56,12 @@ fun mapHistoryEntityToSearchResult(list: List<HistoryEntity>): List<DataModel> =
             }
         }
     }
+
+fun mapHistoryEntityToDataModel(historyEntity: HistoryEntity): DataModel =
+    DataModel(
+        historyEntity.word,
+        listOf(Meanings(Translation(historyEntity.description), historyEntity.imageUrl))
+    )
 
 fun parseLocalSearchResults(appState: AppState): AppState {
     return AppState.Success(mapResult(appState, false))
@@ -109,7 +116,11 @@ fun convertDataModelSuccessToEntity(appState: AppState): HistoryEntity? {
         is AppState.Success -> {
             val searchResult = appState.data
             if (searchResult.isNullOrEmpty() || searchResult[0].text.isNullOrEmpty()) null
-            else HistoryEntity(searchResult[0].text!!, null)
+            else HistoryEntity(
+                searchResult[0].text!!,
+                searchResult[0].meanings?.get(0)?.translation?.translation,
+                searchResult[0].meanings?.get(0)?.imageUrl
+            )
         }
         else -> null
     }

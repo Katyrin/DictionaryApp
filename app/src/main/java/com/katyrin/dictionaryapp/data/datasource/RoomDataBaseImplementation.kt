@@ -4,11 +4,12 @@ import com.katyrin.dictionaryapp.data.model.AppState
 import com.katyrin.dictionaryapp.data.model.DataModel
 import com.katyrin.dictionaryapp.data.storage.HistoryDao
 import com.katyrin.dictionaryapp.utils.convertDataModelSuccessToEntity
+import com.katyrin.dictionaryapp.utils.mapHistoryEntityToDataModel
 import com.katyrin.dictionaryapp.utils.mapHistoryEntityToSearchResult
 
 class RoomDataBaseImplementation(
     private val historyDao: HistoryDao
-    ) : DataSourceLocal<List<DataModel>> {
+) : DataSourceLocal<List<DataModel>> {
 
     override suspend fun getData(word: String): List<DataModel> =
         mapHistoryEntityToSearchResult(historyDao.all())
@@ -18,4 +19,7 @@ class RoomDataBaseImplementation(
             historyDao.insert(it)
         }
     }
+
+    override suspend fun getDataByWord(word: String): DataModel =
+        mapHistoryEntityToDataModel(historyDao.getDataByWord(word))
 }

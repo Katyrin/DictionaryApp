@@ -20,7 +20,7 @@ import kotlinx.coroutines.*
 abstract class BaseActivity<T : AppState, I : Interactor<T>> : AppCompatActivity() {
 
     private var loadingBinding: LoadingLayoutBinding? = null
-    abstract val model: BaseViewModel<T>
+    abstract val model: BaseViewModel<T>?
     protected val networkState: NetworkState by lazy { NetworkStateImpl(applicationContext) }
 
     protected val baseActivityCoroutineScope = CoroutineScope(

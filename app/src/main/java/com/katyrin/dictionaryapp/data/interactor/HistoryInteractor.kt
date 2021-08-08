@@ -18,4 +18,8 @@ class HistoryInteractor(
                 repositoryLocal
             }.getData(word)
         )
+
+    override suspend fun getDataByWord(word: String): AppState {
+        TODO("Not yet implemented")
+    }
 }

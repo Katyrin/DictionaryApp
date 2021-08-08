@@ -19,4 +19,5 @@
     <string name="error_stub">Error</string>
     <string name="dialog_tittle_sorry">Sorry</string>
     <string name="menu_title_history">History</string>
+    <string name="saved_search">Saved search</string>
 </resources>

@@ -74,14 +74,27 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean =
+        when (item.itemId) {
             R.id.menu_history -> {
                 startActivity(Intent(this, HistoryActivity::class.java))
                 true
             }
+            R.id.menu_search_history -> {
+                openHistorySearchDialog()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
+
+    private fun openHistorySearchDialog() {
+        SearchDialogFragment.newInstance(supportFragmentManager).setOnSearchClickListener(
+            object : SearchDialogFragment.OnSearchClickListener {
+                override fun onClick(searchWord: String) {
+                    model.searchHistoryByWord(searchWord)
+                }
+            }
+        )
     }
 
     private fun iniViewModel() {
@@ -89,7 +102,7 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
             throw IllegalStateException("The ViewModel should be initialised first")
         val viewModel: MainViewModel by viewModel()
         model = viewModel
-        model.subscribe().observe(this@MainActivity) { renderData(it) }
+        model.subscribe().observe(this) { renderData(it) }
     }
 
     override fun setDataToAdapter(data: List<DataModel>) {
