@@ -1,12 +1,10 @@
 package com.katyrin.dictionaryapp.data.datasource
 
 import com.katyrin.dictionaryapp.data.model.DataModel
-import io.reactivex.Observable
-import javax.inject.Inject
 
-class RetrofitImplementation @Inject constructor(
+class RetrofitImplementation(
     private val apiService: ApiService
 ) : DataSource<List<DataModel>> {
 
-    override fun getData(word: String): Observable<List<DataModel>> = apiService.search(word)
+    override suspend fun getData(word: String): List<DataModel> = apiService.search(word)
 }
