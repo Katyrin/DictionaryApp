@@ -4,6 +4,8 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class NetworkStateImpl(context: Context) : NetworkState {
 
@@ -30,5 +32,6 @@ class NetworkStateImpl(context: Context) : NetworkState {
         connectivityManager.registerNetworkCallback(request, networkCallback)
     }
 
-    override fun isOnline(): Boolean = isOnline
+    override suspend fun isOnline(): Boolean =
+        withContext(Dispatchers.Default) { isOnline }
 }

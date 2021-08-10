@@ -1,14 +1,12 @@
 package com.katyrin.dictionaryapp.viewmodel
 
 import androidx.lifecycle.LiveData
+import com.katyrin.dictionaryapp.data.interactor.HistoryInteractor
 import com.katyrin.dictionaryapp.data.model.AppState
-import com.katyrin.dictionaryapp.utils.parseSearchResults
-import com.katyrin.dictionaryapp.data.interactor.MainInteractor
-import kotlinx.coroutines.Dispatchers
+import com.katyrin.dictionaryapp.utils.parseLocalSearchResults
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class MainViewModel(private val interactor: MainInteractor) : BaseViewModel<AppState>() {
+class HistoryViewModel(private val interactor: HistoryInteractor) : BaseViewModel<AppState>() {
 
     private val liveDataForViewToObserve: LiveData<AppState> = _mutableLiveData
 
@@ -20,17 +18,8 @@ class MainViewModel(private val interactor: MainInteractor) : BaseViewModel<AppS
         viewModelCoroutineScope.launch { startInteractor(word, isOnline) }
     }
 
-    private suspend fun startInteractor(word: String, isOnline: Boolean) =
-        withContext(Dispatchers.IO) {
-            _mutableLiveData.postValue(parseSearchResults(interactor.getData(word, isOnline)))
-        }
-
-    fun searchHistoryByWord(word: String) {
-        _mutableLiveData.value = AppState.Loading(null)
-        cancelJob()
-        viewModelCoroutineScope.launch {
-            _mutableLiveData.value = interactor.getDataByWord(word)
-        }
+    private suspend fun startInteractor(word: String, isOnline: Boolean) {
+        _mutableLiveData.postValue(parseLocalSearchResults(interactor.getData(word, isOnline)))
     }
 
     override fun handleError(error: Throwable) {

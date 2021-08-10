@@ -1,4 +1,4 @@
-package com.katyrin.dictionaryapp.data.datasource
+package com.katyrin.dictionaryapp.data.network
 
 import com.katyrin.dictionaryapp.data.model.DataModel
 import retrofit2.http.GET

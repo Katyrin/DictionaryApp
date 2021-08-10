@@ -17,4 +17,7 @@
     <string name="image_stub">image</string>
     <string name="dialog_title_sorry">Sorry</string>
     <string name="error_stub">Error</string>
+    <string name="dialog_tittle_sorry">Sorry</string>
+    <string name="menu_title_history">History</string>
+    <string name="saved_search">Saved search</string>
 </resources>

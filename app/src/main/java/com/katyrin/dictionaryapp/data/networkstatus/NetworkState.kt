@@ -1,5 +1,5 @@
 package com.katyrin.dictionaryapp.data.networkstatus
 
 interface NetworkState {
-    fun isOnline(): Boolean
+    suspend fun isOnline(): Boolean
 }
