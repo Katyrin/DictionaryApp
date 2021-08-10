@@ -1,0 +1,22 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+}
+
+dependencies {
+    //Kotlin
+    implementation Kotlin.core
+    implementation Kotlin.stdlib
+
+    //Retrofit 2
+    implementation Retrofit.converter_gson
+
+    //Test
+    testImplementation TestImpl.junit
+    androidTestImplementation TestImpl.test_junit
+    androidTestImplementation TestImpl.espresso
+}
+
+repositories {
+    mavenCentral()
+}

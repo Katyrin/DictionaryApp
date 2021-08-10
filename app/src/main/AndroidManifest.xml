@@ -14,9 +14,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DictionaryApp">
         <activity
-            android:name=".view.history.HistoryActivity"
-            android:exported="true" />
-        <activity
             android:name=".view.description.DescriptionActivity"
             android:exported="true" />
         <activity android:name=".view.main.MainActivity">

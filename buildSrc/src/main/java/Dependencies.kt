@@ -20,8 +20,6 @@ object Modules {
     const val model = ":model"
     const val repository = ":repository"
     const val utils = ":utils"
-
-    // Features
     const val historyScreen = ":historyScreen"
 }
 

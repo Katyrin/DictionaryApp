@@ -1,7 +1,8 @@
 package com.katyrin.dictionaryapp.viewmodel
 
 import androidx.lifecycle.LiveData
-import com.katyrin.dictionaryapp.data.model.AppState
+import com.katyrin.core.viewmodel.BaseViewModel
+import com.katyrin.model.data.AppState
 import com.katyrin.dictionaryapp.utils.parseSearchResults
 import com.katyrin.dictionaryapp.data.interactor.MainInteractor
 import kotlinx.coroutines.Dispatchers

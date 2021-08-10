@@ -1,8 +1,8 @@
 package com.katyrin.dictionaryapp.di
 
 import com.google.gson.GsonBuilder
-import com.katyrin.dictionaryapp.data.network.ApiService
-import com.katyrin.dictionaryapp.data.network.BaseInterceptor
+import com.katyrin.repository.network.ApiService
+import com.katyrin.repository.network.BaseInterceptor
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

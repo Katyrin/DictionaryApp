@@ -3,7 +3,7 @@ package com.katyrin.dictionaryapp.view.main.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.katyrin.dictionaryapp.data.model.DataModel
+import com.katyrin.model.data.DataModel
 import com.katyrin.dictionaryapp.databinding.ItemDictionaryBinding
 
 class MainAdapter(

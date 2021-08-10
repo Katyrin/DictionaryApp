@@ -6,18 +6,14 @@ plugins {
 
 android {
     compileSdkVersion Config.compile_sdk
-    buildToolsVersion Config.build_tools
-
     defaultConfig {
         applicationId Config.application_id
         minSdkVersion Config.min_sdk
         targetSdkVersion Config.target_sdk
         versionCode Releases.version_code
         versionName Releases.version_name
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -28,43 +24,47 @@ android {
         sourceCompatibility Config.java_version
         targetCompatibility Config.java_version
     }
-    kotlinOptions {
-        jvmTarget = '11'
-        useIR = true
-    }
-    buildFeatures {
-        viewBinding true
-    }
 }
 
 dependencies {
+    //Modules
+    implementation project(Modules.core)
+    implementation project(Modules.model)
+    implementation project(Modules.repository)
+    implementation project(Modules.utils)
+    implementation project(Modules.historyScreen)
 
-    implementation Kotlin.core
-    implementation Kotlin.stdlib
-    implementation Kotlin.coroutines_core
-    implementation Kotlin.coroutines_android
-
+    //Design
     implementation Design.appcompat
     implementation Design.material
     implementation Design.constraint_layout
     implementation Design.swipe_refresh_layout
 
-    implementation Retrofit.retrofit
-    implementation Retrofit.converter_gson
-    implementation Retrofit.logging_interceptor
+    //Kotlin
+    implementation Kotlin.core
+    implementation Kotlin.stdlib
+    implementation Kotlin.coroutines_core
+    implementation Kotlin.coroutines_android
 
+    //Koin for Android
     implementation Koin.koin_android
     implementation Koin.koin_view_model
-    implementation Koin.koin_scope
-    implementation Koin.koin_fragment
 
-    implementation Glide.glide
-    kapt Glide.glide_compiler
-
+    //Room
     implementation Room.runtime
     implementation Room.room_ktx
     kapt Room.compiler
 
+    //Retrofit
+    implementation Retrofit.converter_gson
+    implementation Retrofit.retrofit
+    implementation Retrofit.logging_interceptor
+
+    //Glide
+    implementation Glide.glide
+    kapt Glide.glide_compiler
+
+    //Test
     testImplementation TestImpl.junit
     androidTestImplementation TestImpl.test_junit
     androidTestImplementation TestImpl.espresso
