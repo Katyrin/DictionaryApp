@@ -1,18 +1,18 @@
 package com.katyrin.dictionaryapp.di
 
 import androidx.room.Room
-import com.katyrin.dictionaryapp.data.datasource.RetrofitImplementation
-import com.katyrin.dictionaryapp.data.datasource.RoomDataBaseImplementation
-import com.katyrin.dictionaryapp.data.interactor.HistoryInteractor
-import com.katyrin.dictionaryapp.data.model.DataModel
-import com.katyrin.dictionaryapp.data.repository.Repository
-import com.katyrin.dictionaryapp.data.repository.RepositoryImplementation
-import com.katyrin.dictionaryapp.data.repository.RepositoryImplementationLocal
-import com.katyrin.dictionaryapp.data.storage.HistoryDataBase
+import com.katyrin.repository.datasource.RetrofitImplementation
+import com.katyrin.repository.datasource.RoomDataBaseImplementation
+import com.katyrin.historyscreen.interactor.HistoryInteractor
+import com.katyrin.model.data.DataModel
+import com.katyrin.repository.repository.Repository
+import com.katyrin.repository.repository.RepositoryImplementation
+import com.katyrin.repository.repository.RepositoryImplementationLocal
+import com.katyrin.repository.storage.HistoryDataBase
 import com.katyrin.dictionaryapp.viewmodel.MainViewModel
 import com.katyrin.dictionaryapp.data.interactor.MainInteractor
-import com.katyrin.dictionaryapp.data.repository.RepositoryLocal
-import com.katyrin.dictionaryapp.viewmodel.HistoryViewModel
+import com.katyrin.repository.repository.RepositoryLocal
+import com.katyrin.historyscreen.viewmodel.HistoryViewModel
 import org.koin.dsl.module
 
 val application = module {

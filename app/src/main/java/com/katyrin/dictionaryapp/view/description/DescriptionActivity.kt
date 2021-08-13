@@ -14,10 +14,10 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.katyrin.dictionaryapp.R
-import com.katyrin.dictionaryapp.data.networkstatus.NetworkState
-import com.katyrin.dictionaryapp.data.networkstatus.NetworkStateImpl
+import com.katyrin.utils.network.NetworkState
+import com.katyrin.utils.network.NetworkStateImpl
 import com.katyrin.dictionaryapp.databinding.ActivityDescriptionBinding
-import com.katyrin.dictionaryapp.view.AlertDialogFragment
+import com.katyrin.utils.view.AlertDialogFragment
 import kotlinx.coroutines.*
 
 class DescriptionActivity : AppCompatActivity() {

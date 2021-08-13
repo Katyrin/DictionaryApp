@@ -7,13 +7,13 @@ import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.katyrin.dictionaryapp.R
 import com.katyrin.dictionaryapp.data.interactor.MainInteractor
-import com.katyrin.dictionaryapp.data.model.AppState
-import com.katyrin.dictionaryapp.data.model.DataModel
+import com.katyrin.model.data.AppState
+import com.katyrin.model.data.DataModel
 import com.katyrin.dictionaryapp.databinding.ActivityMainBinding
 import com.katyrin.dictionaryapp.utils.convertMeaningsToString
-import com.katyrin.dictionaryapp.view.base.BaseActivity
+import com.katyrin.core.view.BaseActivity
 import com.katyrin.dictionaryapp.view.description.DescriptionActivity
-import com.katyrin.dictionaryapp.view.history.HistoryActivity
+import com.katyrin.historyscreen.view.HistoryActivity
 import com.katyrin.dictionaryapp.view.main.adapter.MainAdapter
 import com.katyrin.dictionaryapp.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
@@ -32,7 +32,7 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
                     this@MainActivity,
                     data.text!!,
                     convertMeaningsToString(data.meanings!!),
-                    data.meanings[0].imageUrl
+                    data.meanings!![0].imageUrl
                 )
             )
         }
