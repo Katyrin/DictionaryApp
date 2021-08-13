@@ -2,6 +2,7 @@ package com.katyrin.historyscreen.view
 
 import android.os.Bundle
 import com.katyrin.historyscreen.databinding.ActivityHistoryBinding
+import com.katyrin.historyscreen.di.injectDependencies
 import com.katyrin.historyscreen.interactor.HistoryInteractor
 import com.katyrin.historyscreen.viewmodel.HistoryViewModel
 import com.katyrin.model.data.AppState
@@ -31,8 +32,8 @@ class HistoryActivity : com.katyrin.core.view.BaseActivity<AppState, HistoryInte
     }
 
     private fun iniViewModel() {
-        if (binding?.historyActivityRecyclerview?.adapter != null)
-            throw IllegalStateException("The ViewModel should be initialised first")
+        check(binding?.historyActivityRecyclerview?.adapter == null) { ADAPTER_NULL_TEXT }
+        injectDependencies()
         val viewModel: HistoryViewModel by viewModel()
         model = viewModel
         model.subscribe().observe(this@HistoryActivity) { renderData(it) }
@@ -45,5 +46,9 @@ class HistoryActivity : com.katyrin.core.view.BaseActivity<AppState, HistoryInte
     override fun onDestroy() {
         binding = null
         super.onDestroy()
+    }
+
+    private companion object {
+        const val ADAPTER_NULL_TEXT = "The ViewModel should be initialised first"
     }
 }

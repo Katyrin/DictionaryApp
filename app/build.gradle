@@ -24,6 +24,7 @@ android {
         sourceCompatibility Config.java_version
         targetCompatibility Config.java_version
     }
+    dynamicFeatures = [Modules.historyScreen]
 }
 
 dependencies {
@@ -32,7 +33,6 @@ dependencies {
     implementation project(Modules.model)
     implementation project(Modules.repository)
     implementation project(Modules.utils)
-    implementation project(Modules.historyScreen)
 
     //Design
     implementation Design.appcompat
@@ -63,6 +63,9 @@ dependencies {
     //Glide
     implementation Glide.glide
     kapt Glide.glide_compiler
+
+    //Google Play
+    implementation GooglePlay.googlePlayCore
 
     //Test
     testImplementation TestImpl.junit
