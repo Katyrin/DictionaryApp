@@ -1,15 +1,20 @@
 package com.katyrin.historyscreen.view
 
 import android.os.Bundle
+import com.katyrin.core.view.BaseActivity
 import com.katyrin.historyscreen.databinding.ActivityHistoryBinding
 import com.katyrin.historyscreen.di.injectDependencies
 import com.katyrin.historyscreen.interactor.HistoryInteractor
 import com.katyrin.historyscreen.viewmodel.HistoryViewModel
 import com.katyrin.model.data.AppState
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.scope.activityScope
+import org.koin.core.scope.KoinScopeComponent
+import org.koin.core.scope.Scope
+import org.koin.core.scope.inject
 
-class HistoryActivity : com.katyrin.core.view.BaseActivity<AppState, HistoryInteractor>() {
+class HistoryActivity : BaseActivity<AppState, HistoryInteractor>(), KoinScopeComponent {
 
+    override val scope: Scope by lazy { activityScope() }
     private var binding: ActivityHistoryBinding? = null
     override lateinit var model: HistoryViewModel
     private val adapter: HistoryAdapter by lazy { HistoryAdapter() }
@@ -34,7 +39,7 @@ class HistoryActivity : com.katyrin.core.view.BaseActivity<AppState, HistoryInte
     private fun iniViewModel() {
         check(binding?.historyActivityRecyclerview?.adapter == null) { ADAPTER_NULL_TEXT }
         injectDependencies()
-        val viewModel: HistoryViewModel by viewModel()
+        val viewModel: HistoryViewModel by inject()
         model = viewModel
         model.subscribe().observe(this@HistoryActivity) { renderData(it) }
     }

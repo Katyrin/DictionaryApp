@@ -10,8 +10,11 @@ import com.katyrin.repository.repository.RepositoryImplementationLocal
 import com.katyrin.repository.storage.HistoryDataBase
 import com.katyrin.dictionaryapp.viewmodel.MainViewModel
 import com.katyrin.dictionaryapp.data.interactor.MainInteractor
+import com.katyrin.dictionaryapp.view.main.MainActivity
 import com.katyrin.repository.repository.RepositoryLocal
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.loadKoinModules
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 fun injectDependencies() = loadModules
@@ -30,6 +33,8 @@ val application = module {
 }
 
 val mainScreen = module {
-    factory { MainViewModel(get()) }
-    factory { MainInteractor(get(), get()) }
+    scope(named<MainActivity>()) {
+        scoped { MainInteractor(get(), get()) }
+        viewModel { MainViewModel(get()) }
+    }
 }

@@ -29,11 +29,15 @@ import com.katyrin.dictionaryapp.viewmodel.MainViewModel
 import com.katyrin.model.data.AppState
 import com.katyrin.model.data.DataModel
 import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.scope.activityScope
+import org.koin.core.scope.KoinScopeComponent
+import org.koin.core.scope.Scope
+import org.koin.core.scope.inject
 
 
-class MainActivity : BaseActivity<AppState, MainInteractor>() {
+class MainActivity : BaseActivity<AppState, MainInteractor>(), KoinScopeComponent {
 
+    override val scope: Scope by lazy { activityScope() }
     override lateinit var model: MainViewModel
     private lateinit var splitInstallManager: SplitInstallManager
     private lateinit var appUpdateManager: AppUpdateManager
@@ -201,7 +205,7 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
     private fun iniViewModel() {
         check(binding?.mainActivityRecyclerview?.adapter == null) { ADAPTER_NULL_TEXT }
         injectDependencies()
-        val viewModel: MainViewModel by viewModel()
+        val viewModel: MainViewModel by inject()
         model = viewModel
         model.subscribe().observe(this) { renderData(it) }
     }
