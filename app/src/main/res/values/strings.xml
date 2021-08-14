@@ -15,4 +15,6 @@
         internet connection.
     </string>
     <string name="title_historyscreenfeature">History Screen Feature</string>
+    <string name="update_has_downloaded_text">An update has just been downloaded.</string>
+    <string name="restart">RESTART</string>
 </resources>
