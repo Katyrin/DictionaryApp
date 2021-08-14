@@ -13,9 +13,6 @@ android {
         versionCode Releases.version_code
         versionName Releases.version_name
     }
-    buildFeatures {
-        viewBinding true
-    }
 }
 
 dependencies {
@@ -23,6 +20,7 @@ dependencies {
     implementation project(Modules.model)
     implementation project(Modules.repository)
     implementation project(Modules.core)
+    implementation project(Modules.utils)
 
     //Design
     implementation Design.appcompat

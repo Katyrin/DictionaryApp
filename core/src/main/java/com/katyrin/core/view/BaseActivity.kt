@@ -3,15 +3,17 @@ package com.katyrin.core.view
 
 import android.os.Bundle
 import android.os.PersistableBundle
-import android.widget.Toast
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import com.katyrin.core.R
-import com.katyrin.core.databinding.LoadingLayoutBinding
 import com.katyrin.core.interactor.Interactor
 import com.katyrin.core.viewmodel.BaseViewModel
 import com.katyrin.model.data.AppState
 import com.katyrin.model.data.DataModel
+import com.katyrin.utils.delegate.viewById
+import com.katyrin.utils.extensions.toast
 import com.katyrin.utils.network.NetworkState
 import com.katyrin.utils.network.NetworkStateImpl
 import com.katyrin.utils.view.AlertDialogFragment
@@ -19,7 +21,10 @@ import kotlinx.coroutines.*
 
 abstract class BaseActivity<T : AppState, I : Interactor<T>> : AppCompatActivity() {
 
-    private var loadingBinding: LoadingLayoutBinding? = null
+    private val progressBarHorizontal by viewById<ProgressBar>(R.id.progress_bar_horizontal)
+    private val progressBarRound by viewById<ProgressBar>(R.id.progress_bar_round)
+    private val loadingFrameLayout by viewById<ConstraintLayout>(R.id.loading_frame_layout)
+
     abstract val model: BaseViewModel<T>
     protected val networkState: NetworkState by lazy { NetworkStateImpl(applicationContext) }
 
@@ -27,12 +32,11 @@ abstract class BaseActivity<T : AppState, I : Interactor<T>> : AppCompatActivity
         Dispatchers.Main
                 + SupervisorJob()
                 + CoroutineExceptionHandler { _, throwable ->
-            Toast.makeText(this, throwable.message, Toast.LENGTH_LONG).show()
+            throwable.message?.let { toast(it) }
         })
 
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
-        loadingBinding = LoadingLayoutBinding.inflate(layoutInflater)
         checkNetworkState()
     }
 
@@ -62,12 +66,12 @@ abstract class BaseActivity<T : AppState, I : Interactor<T>> : AppCompatActivity
             is AppState.Loading -> {
                 showViewLoading()
                 if (appState.progress != null) {
-                    loadingBinding?.progressBarHorizontal?.isVisible = true
-                    loadingBinding?.progressBarRound?.isVisible = false
-                    loadingBinding?.progressBarHorizontal?.progress = appState.progress!!
+                    progressBarHorizontal.isVisible = true
+                    progressBarRound.isVisible = false
+                    progressBarHorizontal.progress = appState.progress!!
                 } else {
-                    loadingBinding?.progressBarHorizontal?.isVisible = false
-                    loadingBinding?.progressBarRound?.isVisible = true
+                    progressBarHorizontal.isVisible = false
+                    progressBarRound.isVisible = true
                 }
             }
             is AppState.Error -> {
@@ -90,11 +94,11 @@ abstract class BaseActivity<T : AppState, I : Interactor<T>> : AppCompatActivity
     }
 
     private fun showViewWorking() {
-        loadingBinding?.loadingFrameLayout?.isVisible = false
+        loadingFrameLayout.isVisible = false
     }
 
     private fun showViewLoading() {
-        loadingBinding?.loadingFrameLayout?.isVisible = true
+        loadingFrameLayout.isVisible = true
     }
 
     private fun isDialogNull(): Boolean =
@@ -107,7 +111,6 @@ abstract class BaseActivity<T : AppState, I : Interactor<T>> : AppCompatActivity
     }
 
     override fun onDestroy() {
-        loadingBinding = null
         cancelJob()
         super.onDestroy()
     }
