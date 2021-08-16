@@ -42,6 +42,7 @@ class MainActivity : BaseActivity<AppState, MainInteractor>(), KoinScopeComponen
     private val mainActivityRecyclerview by viewById<RecyclerView>(R.id.main_activity_recyclerview)
     private val searchFab by viewById<FloatingActionButton>(R.id.search_fab)
 
+    override val layoutRes: Int = R.layout.activity_main
     override val scope: Scope by lazy { activityScope() }
     override lateinit var model: MainViewModel
     private lateinit var splitInstallManager: SplitInstallManager
@@ -75,7 +76,6 @@ class MainActivity : BaseActivity<AppState, MainInteractor>(), KoinScopeComponen
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
         iniViewModel()
         initViews()
         checkForUpdates()

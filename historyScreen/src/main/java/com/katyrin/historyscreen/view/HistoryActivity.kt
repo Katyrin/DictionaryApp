@@ -19,13 +19,14 @@ class HistoryActivity : BaseActivity<AppState, HistoryInteractor>(), KoinScopeCo
 
     private val historyActivityRecyclerview by
     viewById<RecyclerView>(R.id.history_activity_recyclerview)
+
+    override val layoutRes: Int = R.layout.activity_history
     override val scope: Scope by lazy { activityScope() }
     override lateinit var model: HistoryViewModel
     private val adapter: HistoryAdapter by lazy { HistoryAdapter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_history)
         iniViewModel()
         initViews()
     }
@@ -35,9 +36,7 @@ class HistoryActivity : BaseActivity<AppState, HistoryInteractor>(), KoinScopeCo
         model.getData("", false)
     }
 
-    override fun setDataToAdapter(data: List<DataModel>) {
-        adapter.setData(data)
-    }
+    override fun setDataToAdapter(data: List<DataModel>): Unit = adapter.setData(data)
 
     private fun iniViewModel() {
         check(historyActivityRecyclerview.adapter == null) { ADAPTER_NULL_TEXT }

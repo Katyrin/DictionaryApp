@@ -4,7 +4,7 @@ import android.app.Activity
 import android.view.View
 import android.widget.Toast
 
-fun Activity.toast(message: String): Unit =
+fun Activity.toast(message: String?): Unit =
     Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
 
 fun View.toast(message: String): Unit =

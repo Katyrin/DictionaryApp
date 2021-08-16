@@ -2,7 +2,6 @@ package com.katyrin.core.view
 
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -28,16 +27,17 @@ abstract class BaseActivity<T : AppState, I : Interactor<T>> : AppCompatActivity
 
     abstract val model: BaseViewModel<T>
     protected val networkState: NetworkState by inject()
+    protected abstract val layoutRes: Int
 
     protected val baseActivityCoroutineScope = CoroutineScope(
         Dispatchers.Main
                 + SupervisorJob()
-                + CoroutineExceptionHandler { _, throwable ->
-            throwable.message?.let { toast(it) }
-        })
+                + CoroutineExceptionHandler { _, throwable -> toast(throwable.message) }
+    )
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(layoutRes)
         checkNetworkState()
     }
 
@@ -82,17 +82,15 @@ abstract class BaseActivity<T : AppState, I : Interactor<T>> : AppCompatActivity
         }
     }
 
-    protected fun showNoInternetConnectionDialog() {
+    protected fun showNoInternetConnectionDialog(): Unit =
         showAlertDialog(
             getString(R.string.dialog_title_device_is_offline),
             getString(R.string.dialog_message_device_is_offline)
         )
-    }
 
-    protected fun showAlertDialog(title: String?, message: String?) {
+    protected fun showAlertDialog(title: String?, message: String?): Unit =
         AlertDialogFragment.newInstance(title, message)
             .show(supportFragmentManager, DIALOG_FRAGMENT_TAG)
-    }
 
     private fun showViewWorking() {
         loadingFrameLayout.isVisible = false
@@ -107,9 +105,7 @@ abstract class BaseActivity<T : AppState, I : Interactor<T>> : AppCompatActivity
 
     abstract fun setDataToAdapter(data: List<DataModel>)
 
-    protected fun cancelJob() {
-        baseActivityCoroutineScope.coroutineContext.cancelChildren()
-    }
+    protected fun cancelJob(): Unit = baseActivityCoroutineScope.coroutineContext.cancelChildren()
 
     override fun onDestroy() {
         cancelJob()
