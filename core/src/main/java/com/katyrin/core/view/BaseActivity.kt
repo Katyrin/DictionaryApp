@@ -15,18 +15,19 @@ import com.katyrin.model.data.DataModel
 import com.katyrin.utils.delegate.viewById
 import com.katyrin.utils.extensions.toast
 import com.katyrin.utils.network.NetworkState
-import com.katyrin.utils.network.NetworkStateImpl
 import com.katyrin.utils.view.AlertDialogFragment
 import kotlinx.coroutines.*
+import org.koin.android.ext.android.inject
 
 abstract class BaseActivity<T : AppState, I : Interactor<T>> : AppCompatActivity() {
 
     private val progressBarHorizontal by viewById<ProgressBar>(R.id.progress_bar_horizontal)
     private val progressBarRound by viewById<ProgressBar>(R.id.progress_bar_round)
     private val loadingFrameLayout by viewById<ConstraintLayout>(R.id.loading_frame_layout)
+    protected var isNetworkAvailable: Boolean = true
 
     abstract val model: BaseViewModel<T>
-    protected val networkState: NetworkState by lazy { NetworkStateImpl(applicationContext) }
+    protected val networkState: NetworkState by inject()
 
     protected val baseActivityCoroutineScope = CoroutineScope(
         Dispatchers.Main
@@ -43,7 +44,7 @@ abstract class BaseActivity<T : AppState, I : Interactor<T>> : AppCompatActivity
     private fun checkNetworkState() {
         cancelJob()
         baseActivityCoroutineScope.launch {
-            val isNetworkAvailable = networkState.isOnline()
+            isNetworkAvailable = networkState.isOnline()
             if (!isNetworkAvailable && isDialogNull()) showNoInternetConnectionDialog()
         }
     }

@@ -9,7 +9,7 @@ import kotlinx.coroutines.withContext
 
 class NetworkStateImpl(context: Context) : NetworkState {
 
-    private var isOnline: Boolean = false
+    private var isOnline: Boolean = true
 
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {

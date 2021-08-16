@@ -144,7 +144,7 @@ class MainActivity : BaseActivity<AppState, MainInteractor>(), KoinScopeComponen
     private fun setClickFab(searchWord: String) {
         cancelJob()
         baseActivityCoroutineScope.launch {
-            val isNetworkAvailable = networkState.isOnline()
+            isNetworkAvailable = networkState.isOnline()
             if (isNetworkAvailable) model.getData(searchWord, isNetworkAvailable)
             else showNoInternetConnectionDialog()
         }

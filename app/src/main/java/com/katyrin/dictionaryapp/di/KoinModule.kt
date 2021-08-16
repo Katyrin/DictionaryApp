@@ -20,7 +20,7 @@ import org.koin.dsl.module
 fun injectDependencies() = loadModules
 
 private val loadModules by lazy {
-    loadKoinModules(listOf(application, mainScreen, network))
+    loadKoinModules(listOf(application, mainScreen, network, networkState))
 }
 
 val application = module {
