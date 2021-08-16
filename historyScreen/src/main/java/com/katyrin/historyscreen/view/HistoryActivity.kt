@@ -8,6 +8,7 @@ import com.katyrin.historyscreen.di.injectDependencies
 import com.katyrin.historyscreen.interactor.HistoryInteractor
 import com.katyrin.historyscreen.viewmodel.HistoryViewModel
 import com.katyrin.model.data.AppState
+import com.katyrin.model.data.userdata.DataModel
 import com.katyrin.utils.delegate.viewById
 import org.koin.androidx.scope.activityScope
 import org.koin.core.scope.KoinScopeComponent
@@ -34,7 +35,7 @@ class HistoryActivity : BaseActivity<AppState, HistoryInteractor>(), KoinScopeCo
         model.getData("", false)
     }
 
-    override fun setDataToAdapter(data: List<com.katyrin.model.data.DataModel>) {
+    override fun setDataToAdapter(data: List<DataModel>) {
         adapter.setData(data)
     }
 

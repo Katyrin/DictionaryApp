@@ -27,7 +27,7 @@ import com.katyrin.dictionaryapp.view.description.DescriptionActivity
 import com.katyrin.dictionaryapp.view.main.adapter.MainAdapter
 import com.katyrin.dictionaryapp.viewmodel.MainViewModel
 import com.katyrin.model.data.AppState
-import com.katyrin.model.data.DataModel
+import com.katyrin.model.data.userdata.DataModel
 import com.katyrin.utils.delegate.viewById
 import com.katyrin.utils.extensions.toast
 import kotlinx.coroutines.launch
@@ -57,9 +57,9 @@ class MainActivity : BaseActivity<AppState, MainInteractor>(), KoinScopeComponen
             startActivity(
                 DescriptionActivity.getIntent(
                     this@MainActivity,
-                    data.text!!,
-                    convertMeaningsToString(data.meanings!!),
-                    data.meanings!![0].imageUrl
+                    data.text,
+                    convertMeaningsToString(data.meanings),
+                    data.meanings[0].imageUrl
                 )
             )
         }
@@ -201,9 +201,7 @@ class MainActivity : BaseActivity<AppState, MainInteractor>(), KoinScopeComponen
         model.subscribe().observe(this) { renderData(it) }
     }
 
-    override fun setDataToAdapter(data: List<DataModel>) {
-        adapter.setData(data)
-    }
+    override fun setDataToAdapter(data: List<DataModel>): Unit = adapter.setData(data)
 
     private companion object {
         const val REQUEST_CODE = 54

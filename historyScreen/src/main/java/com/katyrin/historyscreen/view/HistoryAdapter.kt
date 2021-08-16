@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.katyrin.historyscreen.R
-import com.katyrin.model.data.DataModel
+import com.katyrin.model.data.userdata.DataModel
 import com.katyrin.utils.delegate.viewById
 import com.katyrin.utils.extensions.toast
 

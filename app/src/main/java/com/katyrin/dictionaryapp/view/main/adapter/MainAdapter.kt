@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.katyrin.dictionaryapp.R
-import com.katyrin.model.data.DataModel
+import com.katyrin.model.data.userdata.DataModel
 import com.katyrin.utils.delegate.viewById
 
 class MainAdapter(
@@ -23,7 +23,7 @@ class MainAdapter(
             if (layoutPosition != RecyclerView.NO_POSITION) {
                 headerTextviewRecyclerItem.text = dataModel.text
                 descriptionTextviewRecyclerItem.text =
-                    dataModel.meanings?.get(0)?.translation?.translation
+                    dataModel.meanings[0].translatedMeaning.translatedMeaning
                 itemView.setOnClickListener { onItemClick(dataModel) }
             }
         }

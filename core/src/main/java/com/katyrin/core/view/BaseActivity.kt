@@ -11,7 +11,7 @@ import com.katyrin.core.R
 import com.katyrin.core.interactor.Interactor
 import com.katyrin.core.viewmodel.BaseViewModel
 import com.katyrin.model.data.AppState
-import com.katyrin.model.data.DataModel
+import com.katyrin.model.data.userdata.DataModel
 import com.katyrin.utils.delegate.viewById
 import com.katyrin.utils.extensions.toast
 import com.katyrin.utils.network.NetworkState

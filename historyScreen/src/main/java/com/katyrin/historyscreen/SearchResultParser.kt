@@ -1,12 +1,11 @@
 package com.katyrin.historyscreen
 
 import com.katyrin.model.data.AppState
-import com.katyrin.model.data.DataModel
-import com.katyrin.model.data.Meanings
+import com.katyrin.model.data.userdata.DataModel
+import com.katyrin.model.data.userdata.Meaning
 
-fun parseLocalSearchResults(appState: AppState): AppState {
-    return AppState.Success(mapResult(appState, false))
-}
+fun parseLocalSearchResults(appState: AppState): AppState =
+    AppState.Success(mapResult(appState, false))
 
 private fun mapResult(
     state: AppState,
@@ -40,14 +39,14 @@ private fun getSuccessResultData(
     }
 }
 
-private fun parseOnlineResult(searchResult: DataModel, newSearchResults: ArrayList<DataModel>) {
-    if (!searchResult.text.isNullOrBlank() && !searchResult.meanings.isNullOrEmpty()) {
-        val newMeanings = arrayListOf<Meanings>()
-        for (meaning in searchResult.meanings!!) {
-            if (meaning.translation != null && !meaning.translation!!.translation.isNullOrBlank())
-                newMeanings.add(Meanings(meaning.translation, meaning.imageUrl))
+private fun parseOnlineResult(searchDataModel: DataModel, newSearchResults: ArrayList<DataModel>) {
+    if (searchDataModel.text.isNotBlank() && searchDataModel.meanings.isNotEmpty()) {
+        val newMeanings = arrayListOf<Meaning>()
+        for (meaning in searchDataModel.meanings) {
+            if (meaning.translatedMeaning.translatedMeaning.isBlank())
+                newMeanings.add(Meaning(meaning.translatedMeaning, meaning.imageUrl))
         }
         if (newMeanings.isNotEmpty())
-            newSearchResults.add(DataModel(searchResult.text, newMeanings))
+            newSearchResults.add(DataModel(searchDataModel.text, newMeanings))
     }
 }
