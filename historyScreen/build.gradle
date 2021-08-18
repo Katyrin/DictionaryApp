@@ -1,9 +1,25 @@
 plugins {
-    id 'com.android.library'
+    id 'com.android.dynamic-feature'
     id 'kotlin-android'
+    id 'kotlin-kapt'
+}
+
+android {
+    compileSdkVersion Config.compile_sdk
+
+    defaultConfig {
+        minSdkVersion Config.min_sdk
+        targetSdkVersion Config.target_sdk
+        versionCode Releases.version_code
+        versionName Releases.version_name
+    }
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
+    implementation project(Modules.app)
     implementation project(Modules.model)
     implementation project(Modules.repository)
     implementation project(Modules.core)
@@ -21,6 +37,11 @@ dependencies {
     //Koin for Android
     implementation Koin.koin_android
     implementation Koin.koin_view_model
+
+    // Room
+    implementation Room.runtime
+    implementation Room.room_ktx
+    kapt Room.compiler
 
     //Test
     testImplementation TestImpl.junit

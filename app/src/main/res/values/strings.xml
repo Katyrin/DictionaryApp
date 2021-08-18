@@ -14,4 +14,7 @@
     <string name="dialog_message_device_is_offline">You can not use app without internet connection. Please, check
         internet connection.
     </string>
+    <string name="title_historyscreenfeature">History Screen Feature</string>
+    <string name="update_has_downloaded_text">An update has just been downloaded.</string>
+    <string name="restart">RESTART</string>
 </resources>

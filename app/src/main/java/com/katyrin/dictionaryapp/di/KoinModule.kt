@@ -3,7 +3,6 @@ package com.katyrin.dictionaryapp.di
 import androidx.room.Room
 import com.katyrin.repository.datasource.RetrofitImplementation
 import com.katyrin.repository.datasource.RoomDataBaseImplementation
-import com.katyrin.historyscreen.interactor.HistoryInteractor
 import com.katyrin.model.data.DataModel
 import com.katyrin.repository.repository.Repository
 import com.katyrin.repository.repository.RepositoryImplementation
@@ -12,8 +11,14 @@ import com.katyrin.repository.storage.HistoryDataBase
 import com.katyrin.dictionaryapp.viewmodel.MainViewModel
 import com.katyrin.dictionaryapp.data.interactor.MainInteractor
 import com.katyrin.repository.repository.RepositoryLocal
-import com.katyrin.historyscreen.viewmodel.HistoryViewModel
+import org.koin.core.context.loadKoinModules
 import org.koin.dsl.module
+
+fun injectDependencies() = loadModules
+
+private val loadModules by lazy {
+    loadKoinModules(listOf(application, mainScreen, network))
+}
 
 val application = module {
     single { Room.databaseBuilder(get(), HistoryDataBase::class.java, "HistoryDB").build() }
@@ -27,9 +32,4 @@ val application = module {
 val mainScreen = module {
     factory { MainViewModel(get()) }
     factory { MainInteractor(get(), get()) }
-}
-
-val historyScreen = module {
-    factory { HistoryViewModel(get()) }
-    factory { HistoryInteractor(get(), get()) }
 }
