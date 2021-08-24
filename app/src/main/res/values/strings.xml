@@ -20,4 +20,5 @@
     <string name="could_not_download">Couldn\'t download feature:</string>
     <string name="adapter_null_text">The ViewModel should be initialised first</string>
     <string name="repeat_update_text">Update flow failed! Result code:</string>
+    <string name="menu_title_settings">Settings</string>
 </resources>
