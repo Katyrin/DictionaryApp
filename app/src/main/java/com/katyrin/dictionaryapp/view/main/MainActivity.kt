@@ -4,8 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.google.android.play.core.appupdate.AppUpdateManager
@@ -20,20 +21,29 @@ import com.google.android.play.core.splitinstall.SplitInstallRequest
 import com.katyrin.core.view.BaseActivity
 import com.katyrin.dictionaryapp.R
 import com.katyrin.dictionaryapp.data.interactor.MainInteractor
-import com.katyrin.dictionaryapp.databinding.ActivityMainBinding
 import com.katyrin.dictionaryapp.di.injectDependencies
 import com.katyrin.dictionaryapp.utils.convertMeaningsToString
 import com.katyrin.dictionaryapp.view.description.DescriptionActivity
 import com.katyrin.dictionaryapp.view.main.adapter.MainAdapter
 import com.katyrin.dictionaryapp.viewmodel.MainViewModel
 import com.katyrin.model.data.AppState
-import com.katyrin.model.data.DataModel
+import com.katyrin.model.data.userdata.DataModel
+import com.katyrin.utils.delegate.viewById
+import com.katyrin.utils.extensions.toast
 import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.scope.activityScope
+import org.koin.core.scope.KoinScopeComponent
+import org.koin.core.scope.Scope
+import org.koin.core.scope.inject
 
 
-class MainActivity : BaseActivity<AppState, MainInteractor>() {
+class MainActivity : BaseActivity<AppState, MainInteractor>(), KoinScopeComponent {
 
+    private val mainActivityRecyclerview by viewById<RecyclerView>(R.id.main_activity_recyclerview)
+    private val searchFab by viewById<FloatingActionButton>(R.id.search_fab)
+
+    override val layoutRes: Int = R.layout.activity_main
+    override val scope: Scope by lazy { activityScope() }
     override lateinit var model: MainViewModel
     private lateinit var splitInstallManager: SplitInstallManager
     private lateinit var appUpdateManager: AppUpdateManager
@@ -43,15 +53,14 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
             if (state.installStatus() == InstallStatus.DOWNLOADED) popupSnackbarForCompleteUpdate()
         }
 
-    private var binding: ActivityMainBinding? = null
     private val adapter: MainAdapter by lazy {
         MainAdapter { data ->
             startActivity(
                 DescriptionActivity.getIntent(
                     this@MainActivity,
-                    data.text!!,
-                    convertMeaningsToString(data.meanings!!),
-                    data.meanings!![0].imageUrl
+                    data.text,
+                    convertMeaningsToString(data.meanings),
+                    data.meanings[0].imageUrl
                 )
             )
         }
@@ -60,21 +69,13 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE) {
-            if (resultCode == RESULT_OK)
-                appUpdateManager.unregisterListener(stateUpdatedListener)
-            else
-                Toast.makeText(
-                    applicationContext,
-                    "$REPEAT_UPDATE_TEXT $resultCode",
-                    Toast.LENGTH_SHORT
-                ).show()
+            if (resultCode == RESULT_OK) appUpdateManager.unregisterListener(stateUpdatedListener)
+            else toast(getString(R.string.repeat_update_text) + " $resultCode")
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding?.root)
         iniViewModel()
         initViews()
         checkForUpdates()
@@ -116,22 +117,20 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
     }
 
     private fun popupSnackbarForCompleteUpdate() {
-        binding?.root?.let { view ->
-            Snackbar.make(
-                view,
-                getString(R.string.update_has_downloaded_text),
-                Snackbar.LENGTH_INDEFINITE
-            ).apply {
-                setAction(getString(R.string.restart)) { appUpdateManager.completeUpdate() }
-                show()
-            }
+        Snackbar.make(
+            searchFab,
+            getString(R.string.update_has_downloaded_text),
+            Snackbar.LENGTH_INDEFINITE
+        ).apply {
+            setAction(getString(R.string.restart)) { appUpdateManager.completeUpdate() }
+            show()
         }
     }
 
     private fun initViews() {
-        binding?.mainActivityRecyclerview?.layoutManager = LinearLayoutManager(applicationContext)
-        binding?.mainActivityRecyclerview?.adapter = adapter
-        binding?.searchFab?.setOnClickListener {
+        mainActivityRecyclerview.layoutManager = LinearLayoutManager(applicationContext)
+        mainActivityRecyclerview.adapter = adapter
+        searchFab.setOnClickListener {
             SearchDialogFragment.newInstance(supportFragmentManager).setOnSearchClickListener(
                 object : SearchDialogFragment.OnSearchClickListener {
                     override fun onClick(searchWord: String) {
@@ -145,7 +144,7 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
     private fun setClickFab(searchWord: String) {
         cancelJob()
         baseActivityCoroutineScope.launch {
-            val isNetworkAvailable = networkState.isOnline()
+            isNetworkAvailable = networkState.isOnline()
             if (isNetworkAvailable) model.getData(searchWord, isNetworkAvailable)
             else showNoInternetConnectionDialog()
         }
@@ -173,11 +172,7 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
                         startActivity(intent)
                     }
                     .addOnFailureListener {
-                        Toast.makeText(
-                            applicationContext,
-                            "Couldn't download feature: " + it.message,
-                            Toast.LENGTH_LONG
-                        ).show()
+                        toast(getString(R.string.could_not_download) + it.message)
                     }
                 true
             }
@@ -199,27 +194,18 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
     }
 
     private fun iniViewModel() {
-        check(binding?.mainActivityRecyclerview?.adapter == null) { ADAPTER_NULL_TEXT }
+        check(mainActivityRecyclerview.adapter == null) { getString(R.string.adapter_null_text) }
         injectDependencies()
-        val viewModel: MainViewModel by viewModel()
+        val viewModel: MainViewModel by inject()
         model = viewModel
         model.subscribe().observe(this) { renderData(it) }
     }
 
-    override fun setDataToAdapter(data: List<DataModel>) {
-        adapter.setData(data)
-    }
-
-    override fun onDestroy() {
-        binding = null
-        super.onDestroy()
-    }
+    override fun setDataToAdapter(data: List<DataModel>): Unit = adapter.setData(data)
 
     private companion object {
         const val REQUEST_CODE = 54
         const val HISTORY_ACTIVITY_PATH = "com.katyrin.historyscreen.view.HistoryActivity"
         const val HISTORY_ACTIVITY_FEATURE_NAME = "historyScreen"
-        const val ADAPTER_NULL_TEXT = "The ViewModel should be initialised first"
-        const val REPEAT_UPDATE_TEXT = "Update flow failed! Result code:"
     }
 }

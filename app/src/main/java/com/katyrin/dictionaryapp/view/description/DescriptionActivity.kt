@@ -7,24 +7,30 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.katyrin.dictionaryapp.R
+import com.katyrin.utils.delegate.viewById
 import com.katyrin.utils.network.NetworkState
 import com.katyrin.utils.network.NetworkStateImpl
-import com.katyrin.dictionaryapp.databinding.ActivityDescriptionBinding
 import com.katyrin.utils.view.AlertDialogFragment
 import kotlinx.coroutines.*
 
 class DescriptionActivity : AppCompatActivity() {
 
-    private val networkState: NetworkState by lazy { NetworkStateImpl(applicationContext) }
-    private var binding: ActivityDescriptionBinding? = null
+    private val descriptionHeader by viewById<TextView>(R.id.description_header)
+    private val descriptionTextview by viewById<TextView>(R.id.description_textview)
+    private val descriptionImageview by viewById<ImageView>(R.id.description_imageview)
+    private val descriptionScreenSwipeRefreshLayout by
+    viewById<SwipeRefreshLayout>(R.id.description_screen_swipe_refresh_layout)
 
+    private val networkState: NetworkState by lazy { NetworkStateImpl(applicationContext) }
     private val descriptionActivityCoroutineScope = CoroutineScope(
         Dispatchers.Main
                 + SupervisorJob()
@@ -34,11 +40,9 @@ class DescriptionActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityDescriptionBinding.inflate(layoutInflater)
-        setContentView(binding?.root)
-
+        setContentView(R.layout.activity_description)
         setActionbarHomeButtonAsUp()
-        binding?.descriptionScreenSwipeRefreshLayout?.setOnRefreshListener { startLoadingOrShowError() }
+        descriptionScreenSwipeRefreshLayout.setOnRefreshListener { startLoadingOrShowError() }
         setData()
     }
 
@@ -59,14 +63,11 @@ class DescriptionActivity : AppCompatActivity() {
 
     private fun setData() {
         val bundle = intent.extras
-        binding?.descriptionHeader?.text = bundle?.getString(WORD_EXTRA)
-        binding?.descriptionTextview?.text = bundle?.getString(DESCRIPTION_EXTRA)
+        descriptionHeader.text = bundle?.getString(WORD_EXTRA)
+        descriptionTextview.text = bundle?.getString(DESCRIPTION_EXTRA)
         val imageLink = bundle?.getString(URL_EXTRA)
-        if (imageLink.isNullOrBlank()) {
-            stopRefreshAnimationIfNeeded()
-        } else {
-            binding?.descriptionImageview?.let { useGlideToLoadPhoto(it, imageLink) }
-        }
+        if (imageLink.isNullOrBlank()) stopRefreshAnimationIfNeeded()
+        else useGlideToLoadPhoto(descriptionImageview, imageLink)
     }
 
     private fun startLoadingOrShowError() {
@@ -84,8 +85,8 @@ class DescriptionActivity : AppCompatActivity() {
     }
 
     private fun stopRefreshAnimationIfNeeded() {
-        if (binding?.descriptionScreenSwipeRefreshLayout?.isRefreshing == true)
-            binding?.descriptionScreenSwipeRefreshLayout?.isRefreshing = false
+        if (descriptionScreenSwipeRefreshLayout.isRefreshing)
+            descriptionScreenSwipeRefreshLayout.isRefreshing = false
     }
 
     private fun useGlideToLoadPhoto(imageView: ImageView, imageLink: String) {
@@ -128,7 +129,6 @@ class DescriptionActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         cancelJob()
-        binding = null
         super.onDestroy()
     }
 

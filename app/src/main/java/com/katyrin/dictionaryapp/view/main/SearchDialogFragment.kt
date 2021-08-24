@@ -8,7 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.katyrin.dictionaryapp.databinding.FragmentSearchDialogBinding
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
+import com.katyrin.dictionaryapp.R
+import com.katyrin.utils.delegate.viewById
 
 class SearchDialogFragment : BottomSheetDialogFragment() {
 
@@ -16,13 +20,15 @@ class SearchDialogFragment : BottomSheetDialogFragment() {
         fun onClick(searchWord: String)
     }
 
-    private var binding: FragmentSearchDialogBinding? = null
+    private val searchButton by viewById<MaterialButton>(R.id.search_button)
+    private val searchEditText by viewById<TextInputEditText>(R.id.search_edit_text)
+    private val searchInputLayout by viewById<TextInputLayout>(R.id.search_input_layout)
     private var onSearchClickListener: OnSearchClickListener? = null
 
     private val textWatcher = object : TextWatcher {
         override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-            binding?.searchButton?.isEnabled = binding?.searchEditText?.text != null &&
-                    binding?.searchEditText?.text.toString().isNotEmpty()
+            searchButton.isEnabled = searchEditText.text != null &&
+                    searchEditText.text.toString().isNotEmpty()
         }
 
         override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -31,7 +37,7 @@ class SearchDialogFragment : BottomSheetDialogFragment() {
 
     private val onSearchButtonClickListener =
         View.OnClickListener {
-            onSearchClickListener?.onClick(binding?.searchEditText?.text.toString())
+            onSearchClickListener?.onClick(searchEditText.text.toString())
             dismiss()
         }
 
@@ -39,27 +45,24 @@ class SearchDialogFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = FragmentSearchDialogBinding.inflate(inflater, container, false)
-        .also { binding = it }
-        .root
+    ): View = inflater.inflate(R.layout.fragment_search_dialog, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding?.searchButton?.setOnClickListener(onSearchButtonClickListener)
-        binding?.searchEditText?.addTextChangedListener(textWatcher)
+        searchButton.setOnClickListener(onSearchButtonClickListener)
+        searchEditText.addTextChangedListener(textWatcher)
         addOnClearClickListener()
     }
 
     override fun onDestroyView() {
         onSearchClickListener = null
-        binding = null
         super.onDestroyView()
     }
 
     private fun addOnClearClickListener() {
-        binding?.searchInputLayout?.setEndIconOnClickListener {
-            binding?.searchEditText?.setText("")
-            binding?.searchButton?.isEnabled = false
+        searchInputLayout.setEndIconOnClickListener {
+            searchEditText.setText("")
+            searchButton.isEnabled = false
         }
     }
 
